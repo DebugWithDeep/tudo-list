@@ -7,69 +7,64 @@ const loginBtn = document.querySelector("#loginBtn");
 const logoutBtn = document.querySelector("#logoutBtn");
 const authMessage = document.querySelector("#authMessage");
 
-let currentUser = JSON.parse(localStorage.getItem("current-user")) || null;
+let currentUser = null;
 
-function updateAuthUI() {
-  if (currentUser) {
-    authSection.classList.add("hidden");
-    appSection.classList.remove("hidden");
+async function updateAuthUI() {
+  authSection.classList.toggle("hidden", !!currentUser);
+  appSection.classList.toggle("hidden", !currentUser);
+  if (typeof loadTasks === "function") await loadTasks();
+}
 
-    if (typeof loadTasks === "function") {
-      loadTasks();
-      renderTasks();
+async function authenticate(mode) {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  if (!emailInput.checkValidity() || !email || !password) {
+    authMessage.textContent = "Enter a valid email and password.";
+    return;
+  }
+  loginBtn.disabled = signupBtn.disabled = true;
+  authMessage.textContent = "Please wait...";
+  try {
+    const credentials = { email, password };
+    const result = mode === "signup"
+      ? await supabaseClient.auth.signUp({
+    ...credentials,
+    options: {
+      emailRedirectTo: window.location.origin + window.location.pathname
     }
-  } else {
-    authSection.classList.remove("hidden");
-    appSection.classList.add("hidden");
+  })
+      : await supabaseClient.auth.signInWithPassword(credentials);
+    if (result.error) throw result.error;
+    passwordInput.value = "";
+    authMessage.textContent = result.data.session
+      ? ""
+      : "Check your email to confirm your account, then log in.";
+  } catch (error) {
+    authMessage.textContent = error.message;
+  } finally {
+    loginBtn.disabled = signupBtn.disabled = false;
   }
 }
 
-signupBtn.addEventListener("click", () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  if (!email || !password) {
-    authMessage.textContent = "Please enter email and password.";
-    return;
+signupBtn.addEventListener("click", () => authenticate("signup"));
+loginBtn.addEventListener("click", () => authenticate("login"));
+logoutBtn.addEventListener("click", async () => {
+  logoutBtn.disabled = true;
+  try {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) throw error;
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    logoutBtn.disabled = false;
   }
-
-  const users = JSON.parse(localStorage.getItem("todo-users")) || [];
-
-  const userExists = users.some((user) => user.email === email);
-
-  if (userExists) {
-    authMessage.textContent = "User already exists. Please login.";
-    return;
-  }
-
-  users.push({ email, password });
-  localStorage.setItem("todo-users", JSON.stringify(users));
-
-  authMessage.textContent = "Signup successful. Now login.";
 });
 
-loginBtn.addEventListener("click", () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  const users = JSON.parse(localStorage.getItem("todo-users")) || [];
-
-  const user = users.find((item) => item.email === email && item.password === password);
-
-  if (!user) {
-    authMessage.textContent = "Invalid email or password.";
-    return;
-  }
-
-  currentUser = { email };
-  localStorage.setItem("current-user", JSON.stringify(currentUser));
-  updateAuthUI();
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user ?? null;
+  setTimeout(() => {
+    updateAuthUI().catch(error => {
+      authMessage.textContent = error.message;
+    });
+  }, 0);
 });
-
-logoutBtn.addEventListener("click", () => {
-  currentUser = null;
-  localStorage.removeItem("current-user");
-  updateAuthUI();
-});
-
-updateAuthUI();
