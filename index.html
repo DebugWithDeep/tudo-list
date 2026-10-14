@@ -3,68 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskFlow - Smart To-Do List</title>
+  <title>Sticky Task Board</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+ 
   <main class="app">
     <section class="hero">
-      <div>
-        <p class="eyebrow">Smart Productivity App</p>
-        <h1>TaskFlow</h1>
-        <p class="subtitle">Plan your work, track your progress, and stay focused every day.</p>
-      </div>
-
-      <div class="stats">
-        <div>
-          <span id="totalTasks">0</span>
-          <p>Total</p>
-        </div>
-        <div>
-          <span id="completedTasks">0</span>
-          <p>Done</p>
-        </div>
-        <div>
-          <span id="pendingTasks">0</span>
-          <p>Pending</p>
-        </div>
-      </div>
+      <p class="eyebrow">Creative To-Do App</p>
+      <h1>Sticky Task Board</h1>
+      <p>Add your task and it will appear like a hand-drawn sticky paper note.</p>
     </section>
 
-    <section class="panel">
-      <form id="taskForm" class="task-form">
-        <input type="text" id="taskInput" placeholder="Add a new task..." autocomplete="off" required />
+    <form id="taskForm" class="task-form">
+      <input type="text" id="taskInput" placeholder="Write your task..." required />
+      <select id="priorityInput">
+        <option value="low">Low</option>
+        <option value="medium" selected>Medium</option>
+        <option value="high">High</option>
+      </select>
+      <input type="date" id="dateInput" />
+      <button type="submit">Add Note</button>
+    </form>
 
-        <select id="priorityInput">
-          <option value="low">Low</option>
-          <option value="medium" selected>Medium</option>
-          <option value="high">High</option>
-        </select>
+    <div class="toolbar">
+      <input type="search" id="searchInput" placeholder="Search notes..." />
 
-        <input type="date" id="dateInput" />
-
-        <button type="submit">Add Task</button>
-      </form>
-
-      <div class="toolbar">
-        <input type="search" id="searchInput" placeholder="Search tasks..." />
-
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="pending">Pending</button>
-          <button class="filter-btn" data-filter="completed">Completed</button>
-        </div>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="pending">Pending</button>
+        <button class="filter-btn" data-filter="completed">Done</button>
       </div>
+    </div>
 
-      <ul id="taskList" class="task-list"></ul>
+    <section id="taskList" class="task-board"></section>
 
-      <div id="emptyState" class="empty-state">
-        <h2>No tasks yet</h2>
-        <p>Add your first task and start organizing your day.</p>
-      </div>
-    </section>
+    <div id="emptyState" class="empty-state">
+      <h2>No sticky notes yet</h2>
+      <p>Add your first task to start your board.</p>
+    </div>
   </main>
-
+  <script src="doodles.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
