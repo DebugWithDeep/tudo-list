@@ -314,9 +314,8 @@ button:hover {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
-
 @keyframes notePop {
   from {
     opacity: 0;
@@ -663,4 +662,56 @@ button:hover {
   50% {
     transform: translateY(-12px) rotate(1deg);
   }
+}
+
+.auth-box {
+  position: relative;
+  z-index: 3;
+  min-height: calc(100vh - 56px);
+  display: grid;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(430px, 100%);
+  background: #fffaf0;
+  border: 3px solid #111827;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 10px 10px 0 #111827;
+  text-align: center;
+}
+
+.auth-card h2 {
+  font-size: 32px;
+  margin: 8px 0;
+  color: #111827;
+}
+
+.auth-subtitle {
+  color: #5b6472;
+  margin-bottom: 18px;
+}
+
+.auth-card input {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+#authMessage {
+  margin-top: 14px;
+  color: #b45309;
+  font-weight: 700;
+}
+
+.logout-btn {
+  margin-top: 18px;
+  width: 130px;
+  background: #ef4444;
 }

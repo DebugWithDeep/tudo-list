@@ -11,12 +11,24 @@ const paperColors = ["paper-yellow", "paper-pink", "paper-blue", "paper-green", 
 const paperStyles = ["tape", "clip", "pin", "torn"];
 const rotations = ["-2deg", "1.5deg", "-1deg", "2deg", "0.5deg"];
 
-let tasks = JSON.parse(localStorage.getItem("sticky-tasks")) || [];
+let tasks = [];
+
+function getTaskStorageKey() {
+  if (!currentUser) return null;
+  return `sticky-tasks-${currentUser.email}`;
+}
+
+function loadTasks() {
+  const key = getTaskStorageKey();
+  tasks = key ? JSON.parse(localStorage.getItem(key)) || [] : [];
+}
 let currentFilter = "all";
 let searchText = "";
 
 function saveTasks() {
-  localStorage.setItem("sticky-tasks", JSON.stringify(tasks));
+  const key = getTaskStorageKey();
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify(tasks));
 }
 
 function getRandomItem(items) {
@@ -130,4 +142,5 @@ filterButtons.forEach((button) => {
   });
 });
 
+loadTasks();
 renderTasks();
